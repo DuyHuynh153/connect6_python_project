@@ -192,22 +192,68 @@ LUU_BUTTON_RECT = pygame.Rect(WIDTH - BAR_WIDTH + 20, 120, 120, 40)
 REDO_BUTTON_RECT = pygame.Rect(WIDTH - BAR_WIDTH + 20,170,120,40 )
 LOAD_BUTTON_RECT = pygame.Rect(WIDTH - BAR_WIDTH + 20,220,120,40 )
 
+undone_moves = []
+
 
 def handle_back_button_click():
     # Handle the BACK button click action here
+    global current_player
+    if len(clicked_points) > 0:
+        # Store the move to be undone in the undone_moves list
+        undone_moves.append((clicked_points[-1], clicked_colors[-1]))
+        
+        # Remove the last move from clicked_points and clicked_colors
+        del clicked_points[-1]
+        del clicked_colors[-1]
+        
+        # Optionally, you can also update the player's turn here if needed
+        if current_player == 'red':
+            current_player = 'black'
+        else:
+            current_player = 'red'
     print("you pressed the BACK button")
     # Add your desired actions here
 
 def handle_luu_button_click():
-    # Handle the LƯU button click action here
-    print("you pressed the LƯU button")
+    filename = "moves.txt"
+    with open(filename, 'w') as file:
+        for (x, y), color in zip(clicked_points, clicked_colors):
+            file.write(f"{x},{y},{color}\n")
+    print("Moves have been saved to 'moves.txt'.")
+    
+
 def handle_redo_button_click():
     # Handle the LƯU button click action here
+    global current_player
+    
+    if len(undone_moves) > 0:
+        # Get the last undone move
+        redo_move = undone_moves.pop()
+        undone_moves.append(redo_move)  # Add the move back to the undone_moves list
+        
+        # Restore the last undone move to clicked_points and clicked_colors
+        last_undone_move = redo_move
+        clicked_points.append(last_undone_move[0])
+        clicked_colors.append(last_undone_move[1])
+        
+        # Switch the player's turn
+        current_player = 'black' if current_player == 'red' else 'red'
     print("you pressed the REDO button")
 def handle_load_button_click():
-    # Handle the LƯU button click action here
-    print("you pressed the LOAD button")
-    
+    filename = "moves.txt"
+    try:
+        with open(filename, 'r') as file:
+            # Clear the current moves and board state
+            clicked_points.clear()
+            clicked_colors.clear()
+            for line in file:
+                x, y, color = line.strip().split(',')
+                x, y = int(x), int(y)
+                clicked_points.append((x, y))
+                clicked_colors.append(color)
+        print("Moves have been loaded from 'moves.txt'.")
+    except FileNotFoundError:
+        print(f"'{filename}' not found. No moves loaded.")
     
 running = True
 is_winner = False
