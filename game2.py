@@ -138,8 +138,8 @@ black_player_turns = 0
 max_turns_per_player = 2
 
 # Place one black stone at the center at the beginning
-center_x = WIDTH // 2
-center_y = HEIGHT // 2
+center_x = 9 * CELL_SIZE
+center_y = 9 * CELL_SIZE
 clicked_points.append((center_x, center_y))
 clicked_colors.append('black')
 black_player_turns += 1
@@ -162,30 +162,50 @@ while running:
 
                 # Determine the color of the circle based on the current player's turn
                 circle_color = 'red' if current_player == 'red' else 'black'
-
-                # Add the clicked point to the list
-                clicked_points.append((col * CELL_SIZE, row * CELL_SIZE))
-
-                # Add the color of the circle to the color list
+            is_colored = False
+            for point in clicked_points:
+                if point[0] == col * CELL_SIZE and point[1] == row * CELL_SIZE:
+                    is_colored = True
+                    break
+            if not is_colored :
+                clicked_points.append((col * CELL_SIZE,row * CELL_SIZE))
                 clicked_colors.append(circle_color)
-
-                # Print the grid coordinates to the console
-                print(f"Clicked at Row: {row}, Col: {col}")
-
-                # Increment the turn counter for the current player
+                print(f"Cliked at Row:{row}, Col:{col}")
+                
                 if current_player == 'red':
                     red_player_turns += 1
                 else:
                     black_player_turns += 1
-
-                # Check if the current player has taken their maximum allowed turns (2 turns)
                 if (current_player == 'red' and red_player_turns >= 2) or \
-                   (current_player == 'black' and black_player_turns >= 2):
-                    # Switch to the other player's turn
-                    current_player = 'black' if current_player == 'red' else 'red'
-                    # Reset the turn counters for both players
-                    red_player_turns = 0
-                    black_player_turns = 0
+                    (current_player == 'black' and black_player_turns >= 2):
+                        current_player == 'black' if current_player == 'red' else 'red'
+                        red_player_turns = 0
+                        black_player_turns = 0
+                
+
+                # # Add the clicked point to the list
+                # clicked_points.append((col * CELL_SIZE, row * CELL_SIZE))
+
+                # # Add the color of the circle to the color list
+                # clicked_colors.append(circle_color)
+
+                # # Print the grid coordinates to the console
+                # print(f"Clicked at Row: {row}, Col: {col}")
+
+                # # Increment the turn counter for the current player
+                # if current_player == 'red':
+                #     red_player_turns += 1
+                # else:
+                #     black_player_turns += 1
+
+                # # Check if the current player has taken their maximum allowed turns (2 turns)
+                # if (current_player == 'red' and red_player_turns >= 2) or \
+                #    (current_player == 'black' and black_player_turns >= 2):
+                #     # Switch to the other player's turn
+                #     current_player = 'black' if current_player == 'red' else 'red'
+                #     # Reset the turn counters for both players
+                #     red_player_turns = 0
+                #     black_player_turns = 0
 
     screen.fill(BACKGROUND_COLOR)  # Clear the screen
     # Draw the game board and move history table

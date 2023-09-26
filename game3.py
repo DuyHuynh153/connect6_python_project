@@ -1,6 +1,7 @@
 
 import pygame
 import tkinter as tk
+import sys
 
 pygame.init()
 #WIDTH = 800
@@ -132,6 +133,39 @@ def check_for_win(color):
             if all(board_state[row+i][col-i] == color for i in range(6)):
                 return True
     return False
+
+
+def create_button (screen , text,position):
+    # light shade of the button
+    color_light = (170, 170, 170)
+
+    # dark shade of the button
+    color_dark = (100, 100, 100)
+    
+      # defining a font
+    smallfont = pygame.font.SysFont('Corbel', 30)
+    
+    # rendering the text
+    button_text = smallfont.render(text, True, color)
+    # Create a rectangular button
+    
+    button_rect = pygame.Rect(position[0], position[1], 120, 40)
+    
+    # Check if the mouse is over the button
+    mouse = pygame.mouse.get_pos()
+    if button_rect.collidepoint(mouse):
+        pygame.draw.rect(screen, color_light, button_rect)
+    else:
+        pygame.draw.rect(screen, color_dark, button_rect)
+
+    # Superimpose the text onto the button
+    screen.blit(button_text, (position[0] + 10, position[1] + 5))
+    
+    
+    
+    
+    
+    
 # Create the game window
 #screen = pygame.display.set_mode((WIDTH, HEIGHT))# Adjust the width for the move history table
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -153,11 +187,34 @@ clicked_colors.append('black')
 black_player_turns += 1
 
 
+BACK_BUTTON_RECT = pygame.Rect(WIDTH - BAR_WIDTH + 20, 60, 120, 40)
+LUU_BUTTON_RECT = pygame.Rect(WIDTH - BAR_WIDTH + 20, 120, 120, 40)
+REDO_BUTTON_RECT = pygame.Rect(WIDTH - BAR_WIDTH + 20,170,120,40 )
+LOAD_BUTTON_RECT = pygame.Rect(WIDTH - BAR_WIDTH + 20,220,120,40 )
+
+
+def handle_back_button_click():
+    # Handle the BACK button click action here
+    print("you pressed the BACK button")
+    # Add your desired actions here
+
+def handle_luu_button_click():
+    # Handle the LƯU button click action here
+    print("you pressed the LƯU button")
+def handle_redo_button_click():
+    # Handle the LƯU button click action here
+    print("you pressed the REDO button")
+def handle_load_button_click():
+    # Handle the LƯU button click action here
+    print("you pressed the LOAD button")
+    
+    
 running = True
 is_winner = False
 win_flag = False
 continue_playing = True
 
+                
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -165,6 +222,19 @@ while running:
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             # Get the mouse coordinates
             mouse_x, mouse_y = pygame.mouse.get_pos()
+            
+             # Check if the click is on the BACK button
+            if BACK_BUTTON_RECT.collidepoint(mouse_x, mouse_y):
+                handle_back_button_click()
+
+            # Check if the click is on the LƯU button
+            elif LUU_BUTTON_RECT.collidepoint(mouse_x, mouse_y):
+                handle_luu_button_click()
+            elif REDO_BUTTON_RECT.collidepoint(mouse_x, mouse_y):
+                handle_redo_button_click()
+                
+            elif LOAD_BUTTON_RECT.collidepoint(mouse_x, mouse_y):
+                handle_load_button_click()
             # Check if the click is near an intersection point
             if is_near_intersection(mouse_x, mouse_y):
                 # Calculate the grid coordinates based on the mouse position
@@ -192,25 +262,69 @@ while running:
                         red_player_turns = 0
                         black_player_turns = 0
                 text_surface = font.render(f"Turn: {current_player}", True, (255, 255, 255))
+            
+           
+            
     screen.fill(BACKGROUND_COLOR)
     # Draw the game board and move history table
     draw_board(screen)
     # Draw circles at the clicked points with respective colors
     if not win_flag:
-     for (x, y), color in zip(clicked_points, clicked_colors):
-        draw_circle(screen, x, y, CIRCLE_RADIUS, color)
-        # Cập nhật trạng thái nút trên bàn cờ
-        row = y // CELL_SIZE
-        col = x // CELL_SIZE
-        board_state[row][col] = color
-        # Kiểm tra chiến thắng
-        if check_for_win(color):
-            is_winner = True
-            win_flag = True
-            continue_playing = False
-            print(f"{color} wins!")
-            #show_winning_message(current_player)
-            text_surface = font.render(f"{color} WIN", True, (255, 255, 255))
+        for (x, y), color in zip(clicked_points, clicked_colors):
+            draw_circle(screen, x, y, CIRCLE_RADIUS, color)
+            # Cập nhật trạng thái nút trên bàn cờ
+            row = y // CELL_SIZE
+            col = x // CELL_SIZE
+            board_state[row][col] = color
+            # Kiểm tra chiến thắng
+            if check_for_win(color):
+                is_winner = True
+                win_flag = True
+                continue_playing = False
+                print(f"{color} wins!")
+                #show_winning_message(current_player)
+                text_surface = font.render(f"{color} WIN", True, (255, 255, 255))
+            
+            
+            
+     # Draw the buttons
+    # Check if the mouse is over the BACK button
+    if BACK_BUTTON_RECT.collidepoint(pygame.mouse.get_pos()):
+        pygame.draw.rect(screen, (200, 200, 200), BACK_BUTTON_RECT)
+    else:
+        pygame.draw.rect(screen, (170, 170, 170), BACK_BUTTON_RECT)
+
+    # Check if the mouse is over the LƯU button
+    if LUU_BUTTON_RECT.collidepoint(pygame.mouse.get_pos()):
+        pygame.draw.rect(screen, (200, 200, 200), LUU_BUTTON_RECT)
+    else:
+        pygame.draw.rect(screen, (170, 170, 170), LUU_BUTTON_RECT)
+        
+    if REDO_BUTTON_RECT.collidepoint(pygame.mouse.get_pos()):
+        pygame.draw.rect(screen, (200, 200, 200), REDO_BUTTON_RECT)
+    else:
+        pygame.draw.rect(screen, (170, 170, 170), REDO_BUTTON_RECT)
+    
+    if LOAD_BUTTON_RECT.collidepoint(pygame.mouse.get_pos()):
+        pygame.draw.rect(screen, (200, 200, 200), LOAD_BUTTON_RECT)
+    else:
+        pygame.draw.rect(screen, (170, 170, 170), LOAD_BUTTON_RECT)
+    # Superimpose the text onto the buttons
+    smallfont = pygame.font.SysFont('Corbel', 30)
+    back_button_text = smallfont.render("BACK", True, (0, 0, 0))
+    luu_button_text = smallfont.render("LƯU", True, (0, 0, 0))
+    redo_button_text = smallfont.render("REDO", True, (0, 0, 0))
+    load_button_text = smallfont.render("LOAD", True, (0, 0, 0))
+    
+    
+    screen.blit(back_button_text, (BACK_BUTTON_RECT.x + 10, BACK_BUTTON_RECT.y + 5))
+    screen.blit(luu_button_text, (LUU_BUTTON_RECT.x + 10, LUU_BUTTON_RECT.y + 5))
+    screen.blit(redo_button_text, (REDO_BUTTON_RECT.x + 10, REDO_BUTTON_RECT.y + 5))
+    screen.blit(load_button_text, (LOAD_BUTTON_RECT.x + 10, LOAD_BUTTON_RECT.y + 5))
+    
+    # tạo button bên table màu xanh
+    # create_button(screen,"BACK",(WIDTH - BAR_WIDTH + 20,60))
+    # create_button(screen,"LƯU",(WIDTH - BAR_WIDTH + 20,120))
     pygame.display.update()
 
 # Quit Pygame
